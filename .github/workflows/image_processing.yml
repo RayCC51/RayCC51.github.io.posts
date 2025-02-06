@@ -12,34 +12,47 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Install ImageMagick
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y imagemagick
-          sudo apt-get install ghostscript
+      # - name: Install ImageMagick
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install -y imagemagick
+      #     sudo apt-get install ghostscript
 
-      - name: Set PATH
-        run: |
-          echo "/usr/local/bin" >> $GITHUB_PATH
-          echo "/usr/bin" >> $GITHUB_PATH
+      # - name: Set PATH
+      #   run: |
+      #     echo "/usr/local/bin" >> $GITHUB_PATH
+      #     echo "/usr/bin" >> $GITHUB_PATH
 
-      - name: About ImageMagick
-        run: |
-          echo "Checking ImageMagick installation..."
-          magick -version || { echo "magick command not found"; exit 1; }
-          convert -version || { echo "convert command not found"; exit 1; }
-          identify -version || { echo "identify command not found"; exit 1; }
+      # - name: About ImageMagick
+      #   run: |
+      #     echo "Checking ImageMagick installation..."
+      #     magick -version || { echo "magick command not found"; exit 1; }
+      #     convert -version || { echo "convert command not found"; exit 1; }
+      #     identify -version || { echo "identify command not found"; exit 1; }
 
-      - name: Process images with ImageMagick
-        run: |
-          for img in assets/img_upload/*; do
-            if [[ "$img" == *.jpg || "$img" == *.jpeg || "$img" == *.png ]]; then
-              magick "$img" -resize 480x -quality 80 "${img%.*}-480.webp"
-              
-              mv "$img" assets/img/
-              mv "${img%.*}-480.webp" assets/img/
-            fi
-          done
+      # - name: Process images with ImageMagick
+      #   run: |
+      #     for img in assets/img_upload/*; do
+      #       if [[ "$img" == *.jpg || "$img" == *.jpeg || "$img" == *.png ]]; then
+      #         magick "$img" -resize 480x -quality 80 "${img%.*}-480.webp"
+
+      #         mv "$img" assets/img/
+      #         mv "${img%.*}-480.webp" assets/img/
+      #       fi
+      #     done
+
+      - name: ImageMagick Action
+        uses: jruipinto/ImageMagick-action@v1
+        with:
+          command: |
+            for img in assets/img_upload/*; do
+              if [[ "$img" == *.jpg || "$img" == *.jpeg || "$img" == *.png ]]; then
+                magick "$img" -resize 480x -quality 80 "${img%.*}-480.webp"
+                
+                mv "$img" assets/img/
+                mv "${img%.*}-480.webp" assets/img/
+              fi
+            done
 
       - name: Commit and push changes
         env:
