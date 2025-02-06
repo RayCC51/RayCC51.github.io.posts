@@ -14,11 +14,20 @@ jobs:
 
       - name: Install ImageMagick
         run: |
+          sudo apt-get update
           sudo apt-get install -y imagemagick
+
+      - name: Set PATH
+        run: |
+          echo "/usr/local/bin" >> $GITHUB_PATH
+          echo "/usr/bin" >> $GITHUB_PATH
 
       - name: About ImageMagick
         run: |
-          which magick
+          echo "Checking ImageMagick installation..."
+          magick -version || { echo "magick command not found"; exit 1; }
+          convert -version || { echo "convert command not found"; exit 1; }
+          identify -version || { echo "identify command not found"; exit 1; }
 
       - name: Process images with ImageMagick
         run: |
