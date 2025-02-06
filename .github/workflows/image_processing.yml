@@ -18,8 +18,9 @@ jobs:
 
       - name: About ImageMagick
         run: |
-          magick -version
           which magick
+
+          magick -version
 
       - name: Process images with ImageMagick
         run: |
