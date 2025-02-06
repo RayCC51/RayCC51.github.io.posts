@@ -45,14 +45,12 @@ jobs:
         uses: jruipinto/ImageMagick-action@v1
         with:
           command: |
-            for img in assets/img_upload/*; do
-              if [[ "$img" == *.jpg || "$img" == *.jpeg || "$img" == *.png ]]; then
-                magick "$img" -resize 480x -quality 80 "${img%.*}-480.webp"
-                
-                mv "$img" assets/img/
-                mv "${img%.*}-480.webp" assets/img/
-              fi
-            done
+            magick "$img" -resize 480x -quality 80 "${img%.*}-480.webp"
+
+      # - name: Move files
+      #   run: |
+      #     mv "$img" assets/img/
+      #     mv "${img%.*}-480.webp" assets/img/
 
       - name: Commit and push changes
         env:

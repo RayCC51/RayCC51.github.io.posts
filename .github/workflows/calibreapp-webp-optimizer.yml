@@ -1,0 +1,25 @@
+name: Compress images
+
+on:
+  push:
+    path:
+      - "assets/img_upload/**.jpg"
+      - "assets/img_upload/**.jpeg"
+      - "assets/img_upload/**.png"
+      - "assets/img_upload/**.webp"
+
+jobs:
+  build:
+    name: calibreapp/webp-optimizer
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@master
+
+      - name: Compress Images
+        uses: calibreapp/webp-optimizer@master
+        with:
+          githubToken: ${{ secrets.SYNC_POSTS }}
+          jpegQuality: "80"
+          pngQuality: "80"
+          webpQuality: "80"
