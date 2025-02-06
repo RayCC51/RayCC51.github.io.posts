@@ -20,8 +20,6 @@ jobs:
         run: |
           which magick
 
-          magick -version
-
       - name: Process images with ImageMagick
         run: |
           for img in assets/img_upload/*; do
