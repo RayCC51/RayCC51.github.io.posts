@@ -1,0 +1,38 @@
+name: Image Processing
+
+on:
+  push:
+    paths:
+      - 'assets/img_upload/**'
+
+jobs:
+  process-images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+ 
+      - name: Install ImageMagick
+        run: |
+          sudo apt-get install -y imagemagick
+
+      - name: Process images with ImageMagick
+        run: |
+          for img in assets/img_upload/*; do
+            if [[ "$img" == *.jpg || "$img" == *.jpeg || "$img" == *.png ]]; then
+              magick "$img" -resize 480x -quality 80 "${img%.*}-480.webp"
+              
+              mv "$img" assets/img/
+              mv "${img%.*}-480.webp" assets/img/
+            fi
+          done
+
+      - name: Commit and push changes
+        env: 
+          GITHUB_TOKEN: ${{secrets.SYNC_POSTS}}
+        run: |
+          git config --local user.email "4q26dd@gmail.com"
+          git config --local user.name "RayCC51"
+          git add assets/img/*
+          git commit -m "Image processed" || echo "No changes"
+          git push
