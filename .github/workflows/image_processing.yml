@@ -3,7 +3,7 @@ name: Image Processing
 on:
   push:
     paths:
-      - 'assets/img_upload/**'
+      - "assets/img_upload/**"
 
 jobs:
   process-images:
@@ -11,10 +11,15 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
- 
+
       - name: Install ImageMagick
         run: |
           sudo apt-get install -y imagemagick
+
+      - name: About ImageMagick
+        run: |
+          magick -version
+          which magick
 
       - name: Process images with ImageMagick
         run: |
@@ -28,7 +33,7 @@ jobs:
           done
 
       - name: Commit and push changes
-        env: 
+        env:
           GITHUB_TOKEN: ${{secrets.SYNC_POSTS}}
         run: |
           git config --local user.email "4q26dd@gmail.com"
