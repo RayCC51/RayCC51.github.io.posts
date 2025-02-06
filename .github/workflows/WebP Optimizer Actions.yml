@@ -1,4 +1,4 @@
-name: Compress images
+name: WebP Optimizer Actions
 
 on:
   push:
@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@master
 
       - name: Compress Images
-        uses: calibreapp/webp-optimizer@master
+        uses: nemeaXYZ/webp-optimizer@v1.0.0-alpha
         with:
           githubToken: ${{ secrets.SYNC_POSTS }}
           jpegQuality: "80"
