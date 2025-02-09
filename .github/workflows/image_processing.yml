@@ -4,7 +4,8 @@ on:
   push:
     paths:
       - "assets/img_upload/**"
-# Create a new folder[img_upload] and push new images only to this folder.
+# Create a new folder[img_upload/] and push new images only to this folder.
+# Add [.gitkeep] empty file inside [img_upload/] folder.
 
 permissions:
   contents: write
@@ -21,11 +22,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y imagemagick
 
-      # - name: Cheking ImageMagick
-      #   run: |
-      #     echo "Checking ImageMagick installation..."
-      #     convert -version || { echo "convert command not found"; exit 1; }
-
+      # Create 480 webp and replace original image to webp.
       - name: Process images with ImageMagick
         run: |
           for img in assets/img_upload/*.{jpg,jpeg,png,gif,webp}; do
@@ -40,7 +37,7 @@ jobs:
         run: |
           mv assets/img_upload/* assets/img/
 
-      # Insert your info
+      # Insert your info.
       - name: Commit and push changes
         env:
           GITHUB_TOKEN: ${{secrets.SYNC_POSTS}}
