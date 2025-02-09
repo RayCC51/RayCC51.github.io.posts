@@ -4,9 +4,7 @@ on:
   push:
     paths:
       - "assets/img_upload/**"
-
-# on:
-#   workflow_dispatch:
+# Create a new folder[img_upload] and push new images only to this folder.
 
 permissions:
   contents: write
@@ -22,26 +20,14 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y imagemagick
-          sudo apt-get install -y ghostscript
 
-      # - name: Set PATH
+      # - name: Cheking ImageMagick
       #   run: |
-      #     echo "/usr/local/bin" >> $GITHUB_PATH
-      #     echo "/usr/bin" >> $GITHUB_PATH
-      - name: About ImageMagick
-        run: |
-          echo "Checking ImageMagick installation..."
-          convert -version || { echo "convert command not found"; exit 1; }
-        # identify -version || { echo "identify command not found"; exit 1; }
-        # magick -version || { echo "magick command not found"; exit 1; }
+      #     echo "Checking ImageMagick installation..."
+      #     convert -version || { echo "convert command not found"; exit 1; }
 
       - name: Process images with ImageMagick
-        # mogrify -path "assets/img_upload/" -quality 80% -format webp -strip -resize 480x "assets/img_upload/*.jpg"
         run: |
-          echo "    **********"
-          ls assets/img_upload/
-          echo "    **********"
-
           for img in assets/img_upload/*.{jpg,jpeg,png,gif,webp}; do
             [ -e "$img" ] || continue
 
@@ -50,40 +36,11 @@ jobs:
             rm "$img"
           done
 
-          echo "    **********"
-          ls assets/img_upload/
-          echo "    **********"
-        # FIXME: It speak hello but no new image file.
-
-      # - name: Process images with ImageMagick
-      #   run: |
-      #     for img in assets/img_upload/*; do
-      #       if [[ "$img" == *.jpg || "$img" == *.jpeg || "$img" == *.png ]]; then
-      #         magick "$img" -resize 480x -quality 80 "${img%.*}-480.webp"
-      #         mv "$img" assets/img/
-      #         mv "${img%.*}-480.webp" assets/img/
-      #       fi
-      #     done
-      # - name: ImageMagick Action
-      #   uses: jruipinto/ImageMagick-action@v1
-      #   with:
-      #     command: |
-      #       convert "$img" -resize 480x -quality 80 "${img%.*}-480.webp"
       - name: Move files
         run: |
           mv assets/img_upload/* assets/img/
-          echo "    ********** img_upload/"
-          ls assets/img_upload/
-          echo "    ********** img/"
-          ls assets/img/
-          echo "    **********"
-          echo "    **********"
-          identify assets/img/*
-          echo "    **********"
 
-        # mv "$img" assets/img/
-        # mv "${img%.*}-480.webp" assets/img/
-
+      # Insert your info
       - name: Commit and push changes
         env:
           GITHUB_TOKEN: ${{secrets.SYNC_POSTS}}
