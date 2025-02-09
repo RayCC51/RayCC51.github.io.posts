@@ -22,8 +22,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y imagemagick
           echo "...ImageMagick installation complete."
-          echo "...ImageMagick version checking."
-          magick -version
 
       # Create 480 webp and convert original image to webp.
       - name: Process images with ImageMagick
