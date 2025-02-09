@@ -22,7 +22,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y imagemagick
 
-      # Create 480 webp and replace original image to webp.
+      # Create 480 webp and convert original image to webp.
       - name: Process images with ImageMagick
         run: |
           for img in assets/img_upload/*.{jpg,jpeg,png,gif,webp}; do
