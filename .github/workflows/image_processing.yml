@@ -3,7 +3,11 @@ name: Image Processing
 on:
   push:
     paths:
-      - "assets/img_upload/**"
+      - "assets/img_upload/*.jpg"
+      - "assets/img_upload/*.jpeg"
+      - "assets/img_upload/*.png"
+      - "assets/img_upload/*.gif"
+      - "assets/img_upload/*.webp"
 # Create a new folder[img_upload/] and push new images only to this folder.
 # Add [.gitkeep] empty file inside [img_upload/] folder.
 
