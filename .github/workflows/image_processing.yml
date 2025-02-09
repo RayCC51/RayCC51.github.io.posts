@@ -1,9 +1,12 @@
 name: Image Processing
 
+# on:
+#   push:
+#     paths:
+#       - "assets/img_upload/**"
+
 on:
-  push:
-    paths:
-      - "assets/img_upload/**"
+  workflow_dispatch:
 
 jobs:
   process-images:
@@ -45,19 +48,19 @@ jobs:
         uses: jruipinto/ImageMagick-action@v1
         with:
           command: |
-            magick "$img" -resize 480x -quality 80 "${img%.*}-480.webp"
+            convert "$img" -resize 480x -quality 80 "${img%.*}-480.webp"
 
       # - name: Move files
       #   run: |
       #     mv "$img" assets/img/
       #     mv "${img%.*}-480.webp" assets/img/
 
-      - name: Commit and push changes
-        env:
-          GITHUB_TOKEN: ${{secrets.SYNC_POSTS}}
-        run: |
-          git config --local user.email "4q26dd@gmail.com"
-          git config --local user.name "RayCC51"
-          git add assets/img/*
-          git commit -m "Image processed" || echo "No changes"
-          git push
+      # - name: Commit and push changes
+      #   env:
+      #     GITHUB_TOKEN: ${{secrets.SYNC_POSTS}}
+      #   run: |
+      #     git config --local user.email "4q26dd@gmail.com"
+      #     git config --local user.name "RayCC51"
+      #     git add assets/img/*
+      #     git commit -m "Image processed" || echo "No changes"
+      #     git push
