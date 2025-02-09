@@ -21,17 +21,27 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y imagemagick
+          echo "...ImageMagick installation complete."
+          echo "...ImageMagick version checking."
+          magick -version
 
       # Create 480 webp and convert original image to webp.
       - name: Process images with ImageMagick
         run: |
+          echo "...Starting image processing..."
+
           for img in assets/img_upload/*.{jpg,jpeg,png,gif,webp}; do
             [ -e "$img" ] || continue
 
             convert "$img" -quality 80 -format webp -strip -resize 480x "assets/img_upload/$(basename "${img%.*}-480").webp"
+            echo "+ Created 480px image: assets/img_upload/$(basename '${img%.*}-480').webp"
+
             convert "$img" -quality 80 -format webp -strip "assets/img_upload/$(basename "${img%.*}").webp"
+            echo "+ Created original image in WebP format: assets/img_upload/$(basename '${img%.*}').webp"
+
             rm "$img"
           done
+          echo "...Image processing complete."
 
       - name: Move files
         run: |
