@@ -1,12 +1,12 @@
 name: Image Processing
 
-# on:
-#   push:
-#     paths:
-#       - "assets/img_upload/**"
-
 on:
-  workflow_dispatch:
+  push:
+    paths:
+      - "assets/img_upload/**"
+
+# on:
+#   workflow_dispatch:
 
 jobs:
   process-images:
@@ -15,52 +15,79 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      # - name: Install ImageMagick
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install -y imagemagick
-      #     sudo apt-get install ghostscript
+      - name: Install ImageMagick
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y imagemagick
+          sudo apt-get install -y ghostscript
 
       # - name: Set PATH
       #   run: |
       #     echo "/usr/local/bin" >> $GITHUB_PATH
       #     echo "/usr/bin" >> $GITHUB_PATH
+      - name: About ImageMagick
+        run: |
+          echo "Checking ImageMagick installation..."
+          convert -version || { echo "convert command not found"; exit 1; }
+        # identify -version || { echo "identify command not found"; exit 1; }
+        # magick -version || { echo "magick command not found"; exit 1; }
 
-      # - name: About ImageMagick
-      #   run: |
-      #     echo "Checking ImageMagick installation..."
-      #     magick -version || { echo "magick command not found"; exit 1; }
-      #     convert -version || { echo "convert command not found"; exit 1; }
-      #     identify -version || { echo "identify command not found"; exit 1; }
+      - name: Process images with ImageMagick
+        # mogrify -path "assets/img_upload/" -quality 80% -format webp -strip -resize 480x "assets/img_upload/*.jpg"
+        run: |
+          echo "    **********"
+          ls assets/img_upload/
+          echo "    **********"
+
+          for img in assets/img_upload/*.{jpg,jpeg,png,gif,webp}; do
+            [ -e "$img" ] || continue
+
+            convert "$img" -quality 80 -format webp -strip -resize 480x "assets/img_upload/$(basename "${img%.*}-480").webp"
+            convert "$img" -quality 80 -format webp -strip "assets/img_upload/$(basename "${img%.*}").webp"
+            rm "$img"
+          done
+
+          echo "    **********"
+          ls assets/img_upload/
+          echo "    **********"
+        # FIXME: It speak hello but no new image file.
 
       # - name: Process images with ImageMagick
       #   run: |
       #     for img in assets/img_upload/*; do
       #       if [[ "$img" == *.jpg || "$img" == *.jpeg || "$img" == *.png ]]; then
       #         magick "$img" -resize 480x -quality 80 "${img%.*}-480.webp"
-
       #         mv "$img" assets/img/
       #         mv "${img%.*}-480.webp" assets/img/
       #       fi
       #     done
+      # - name: ImageMagick Action
+      #   uses: jruipinto/ImageMagick-action@v1
+      #   with:
+      #     command: |
+      #       convert "$img" -resize 480x -quality 80 "${img%.*}-480.webp"
+      - name: Move files
+        run: |
+          mv assets/img_upload/* assets/img/
+          echo "    ********** img_upload/"
+          ls assets/img_upload/
+          echo "    ********** img/"
+          ls assets/img/
+          echo "    **********"
+          echo "    **********"
+          identify assets/img/*
+          echo "    **********"
 
-      - name: ImageMagick Action
-        uses: jruipinto/ImageMagick-action@v1
-        with:
-          command: |
-            convert "$img" -resize 480x -quality 80 "${img%.*}-480.webp"
+        # mv "$img" assets/img/
+        # mv "${img%.*}-480.webp" assets/img/
 
-      # - name: Move files
-      #   run: |
-      #     mv "$img" assets/img/
-      #     mv "${img%.*}-480.webp" assets/img/
-
-      # - name: Commit and push changes
-      #   env:
-      #     GITHUB_TOKEN: ${{secrets.SYNC_POSTS}}
-      #   run: |
-      #     git config --local user.email "4q26dd@gmail.com"
-      #     git config --local user.name "RayCC51"
-      #     git add assets/img/*
-      #     git commit -m "Image processed" || echo "No changes"
-      #     git push
+      - name: Commit and push changes
+        env:
+          GITHUB_TOKEN: ${{secrets.SYNC_POSTS}}
+        run: |
+          git config --local user.name "RayCC51"
+          git config --local user.email "4q26dd@gmail.com"
+          git add assets/img/*
+          git add assets/img_upload/*
+          git commit -m "Image processed" || echo "No changes"
+          git push
