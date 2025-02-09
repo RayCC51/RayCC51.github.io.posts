@@ -3,6 +3,10 @@ on:
   push:
     branches:
       - main
+    path:
+      - "assets/img/**"
+      - "_posts/**"
+      - "_projects/**"
   workflow_dispatch:
 jobs:
   sync:
